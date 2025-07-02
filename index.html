@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mood Color Journal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white p-6">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Mood Color Journal</h1>
+    <form id="moodForm" class="mb-6">
+      <label class="block mb-2 font-medium">Select your mood:</label>
+      <select id="moodSelect" class="p-2 border rounded w-full">
+        <option value="happy">Happy 😊</option>
+        <option value="sad">Sad 😢</option>
+        <option value="angry">Angry 😡</option>
+        <option value="calm">Calm 😌</option>
+        <option value="anxious">Anxious 😰</option>
+        <option value="excited">Excited 😄</option>
+      </select>
+      <button type="submit" class="mt-4 px-4 py-2 bg-black text-white rounded">Log Mood</button>
+    </form>
+
+    <h2 class="text-xl font-semibold mb-2">Mood Grid</h2>
+    <div id="moodGrid" class="grid grid-cols-7 gap-2"></div>
+  </div>
+
+  <script>
+    const moodColors = {
+      happy: '#facc15',
+      sad: '#60a5fa',
+      angry: '#f87171',
+      calm: '#34d399',
+      anxious: '#a78bfa',
+      excited: '#fb923c'
+    };
+
+    const moodForm = document.getElementById('moodForm');
+    const moodSelect = document.getElementById('moodSelect');
+    const moodGrid = document.getElementById('moodGrid');
+
+    const moodData = JSON.parse(localStorage.getItem('moodJournal') || '[]');
+
+    const saveMood = (mood) => {
+      const entry = {
+        mood,
+        date: new Date().toLocaleDateString()
+      };
+      moodData.push(entry);
+      localStorage.setItem('moodJournal', JSON.stringify(moodData));
+    };
+
+    const renderMoodGrid = () => {
+      moodGrid.innerHTML = '';
+      moodData.forEach(entry => {
+        const tile = document.createElement('div');
+        tile.className = 'w-8 h-8 rounded shadow';
+        tile.style.backgroundColor = moodColors[entry.mood];
+        tile.title = `${entry.date}: ${entry.mood}`;
+        moodGrid.appendChild(tile);
+      });
+    };
+
+    moodForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const selectedMood = moodSelect.value;
+      saveMood(selectedMood);
+      renderMoodGrid();
+    });
+
+    renderMoodGrid();
+  </script>
+</body>
+</html>
